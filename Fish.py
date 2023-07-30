@@ -7,6 +7,7 @@ class Fish:
     def __init__(self, name: str, base_size: float, color: tuple[int, int, int], speed: float, max_hunger: float):
         self.name = name
         self.base_size = base_size
+        self.size = self.base_size
         self.color = color
         self.speed = speed
         self.max_hunger = max_hunger
@@ -15,9 +16,14 @@ class Fish:
         self.direction = 1
         self.alive = True
 
+    def __str__(self):
+        fish_info = self.name.ljust(20) + " Size: " + str(self.size) + " Speed: " + str(self.speed) + " Hunger: " + str(self.hunger)
+        return fish_info
+
     def swim(self):
         if self.alive:
             self.pos[0] += self.direction
+            print(self.pos[0])
             # Turn if reached screen border
             if self.pos[0] == WIDTH or self.pos[0] == 0:
                 self.direction *= -1
