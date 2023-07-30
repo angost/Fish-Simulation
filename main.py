@@ -1,8 +1,20 @@
 
 import pygame
+from random import randint, choice
+from Fish import Fish
 
-def setup():
-    pass
+def fish_setup():
+    fish = []
+    fish_names = ("Losos", "Karp", "Pstrag", "Dorsz", "Rozdymka", "Miecznik", "Nemo")
+
+    for i in range(10):
+        fish.append(Fish
+                    (choice(fish_names),
+                    randint(1,300),
+                    (randint(0,255), randint(0,255), randint(0,255)),
+                    randint(1,20),
+                    randint(5,100)))
+    return fish
 
 def main():
     WIDTH = 800
