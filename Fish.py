@@ -1,7 +1,7 @@
 
 from random import randint
-WIDTH = 640
-HEIGHT = 1080
+WIDTH = 800
+HEIGHT = 600
 
 class Fish:
     def __init__(self, name: str, base_size: float, color: tuple[int, int, int], speed: float, max_hunger: float):
@@ -26,4 +26,3 @@ class Fish:
             if self.hunger <= 0:
                 self.alive = False
                 print("x_x")
-                
