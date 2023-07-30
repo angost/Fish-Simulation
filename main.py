@@ -15,15 +15,16 @@ class Fish:
         self.alive = True
 
     def swim(self):
-        #if self.alive: ?
-        self.pos[0] += self.direction
-        # Turn if reached screen border
-        if self.pos[0] == WIDTH or self.pos[0] == 0:
-            self.direction *= -1
+        if self.alive:
+            self.pos[0] += self.direction
+            # Turn if reached screen border
+            if self.pos[0] == WIDTH or self.pos[0] == 0:
+                self.direction *= -1
 
-        self.hunger -= self.max_hunger * 0.05
-        if self.hunger <= 0:
-            self.alive = False
+            self.hunger -= self.max_hunger * 0.05
+            if self.hunger <= 0:
+                self.alive = False
+                print("x_x")
 
 
 f = Fish("Losos", 150, (randint(0,255), randint(0,255), randint(0,255)), 10, 20)
