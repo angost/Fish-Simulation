@@ -8,10 +8,11 @@ def fish_setup(nr_of_fish):
     fish_names = ("Losos", "Karp", "Pstrag", "Dorsz", "Rozdymka", "Miecznik", "Nemo")
 
     for fish_index in range(nr_of_fish):
+        size = randint(1,50)
         fish.append(Fish
                     (choice(fish_names),
                     "assets/blue_fish.png",
-                    randint(1,50),
+                    [size * 1.5, size],
                     randint(1,5)/2,))
     return fish
 
@@ -37,8 +38,8 @@ def main():
 
         screen.fill((42, 108, 212))
         for fish in all_fish:
-            pygame.draw.circle(screen, fish.color, fish.pos, fish.size)
-            screen.blit(fish.img, fish.pos)
+            # pygame.draw.circle(screen, fish.color, fish.pos, fish.size)
+            screen.blit(fish.img, fish.img_pos)
             fish.swim(all_fish)
 
         pygame.display.flip()

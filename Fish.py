@@ -10,11 +10,12 @@ HEIGHT = 768
 class Fish:
     def __init__(self, name: str, img_path: str, base_size: list[float, float], speed: float, max_hunger: float = 100):
         self.name = name
+        # [width, height]
         self.base_size = base_size
         self.size = self.base_size
         self.img_path = img_path
         self.img = pygame.image.load(self.img_path)
-        self.img = pygame.transform.scale(self.img, (self.size, self.size))
+        self.img = pygame.transform.scale(self.img, (self.size[0], self.size[1]))
         self.speed = speed
         self.max_hunger = max_hunger
         self.prey_hunger = max_hunger/2
@@ -48,6 +49,7 @@ class Fish:
             # Falling to the bottom of the screen
             if self.pos[1] < HEIGHT:
                 self.pos[1] += 1
+                self.img_pos[1] += 1
 
 
     def neutral_swim(self):
@@ -65,7 +67,7 @@ class Fish:
 
     def follow_swim(self, all_fish):
         # FINDING TARGET (nearest smaller fish) if not found already or previous target died or previous target got too big
-        if not self.following_target or not self.following_target.alive or self.following_target.size > self.size:
+        if not self.following_target or not self.following_target.alive or self.following_target.area() > self.area():
             self.following_target = self.find_nearest_target(all_fish)
             if self.following_target:
                 print(self.name + " is hungry...")
@@ -96,9 +98,10 @@ class Fish:
 
 
     def find_nearest_target(self, all_fish: list):
-        # Target - alive! smaller fish
+        '''Finds nearest target. Target = alive! smaller fish\n
+        Calculates distance between centres of imgs'''
         # TIP: self doesn't end up in targets list beaceuse its not true that self.size < self.size; if lookingfor targets method were to change, self not being in targets list has to be guaranteed
-        targets = [fish for fish in all_fish if (fish.alive and fish.size < self.size)]
+        targets = [fish for fish in all_fish if (fish.alive and fish.area() < self.area())]
         # Returns None when there are no smaller fish
         if len(targets) == 0:
             return None
@@ -133,16 +136,14 @@ class Fish:
         print("x_x")
 
 
-    def grow_by(self, amount):
-        self.size += amount
-        self.img = pygame.image.load(self.img_path)
-        self.img = pygame.transform.scale(self.img, (self.size, self.size))
-
-
-    def grow_to_size(self, new_size):
+    def grow_to_size(self, new_size: list[float, float]):
         self.size = new_size
         self.img = pygame.image.load(self.img_path)
-        self.img = pygame.transform.scale(self.img, (self.size, self.size))
+        self.img = pygame.transform.scale(self.img, (self.size[0], self.size[1]))
+
+
+    def area(self):
+        return self.size[0] * self.size[1]
 
 
     def change_hunger(self, new_hunger):
@@ -192,14 +193,18 @@ class Fish:
 
     def eat_other_fish(self, other_fish):
         ''' Fish gets more hunger and grows. Other fish dies.'''
-        old_size = self.size
-
-        self.change_hunger(self.hunger + other_fish.size)
+        old_area = self.area()
         # Fish absorbs eaten fish area
-        self.grow_to_size(sqrt(((pi * self.size**2) + (pi * other_fish.size**2))/pi))
+        w_to_h = self.size[0]/self.size[1]
+        new_area = self.area() + other_fish.area()
+        new_h = sqrt(new_area / w_to_h)
+        new_w = new_h * w_to_h
+        self.grow_to_size([new_w, new_h])
+
+        self.change_hunger(self.hunger + other_fish.area())
         self.following_target = None
 
-        print("Dziab!!\t" + self.name + " has eaten " + other_fish.name + ". Size: " + str(old_size) + " -> " + str(self.size))
+        print("Dziab!!\t" + self.name + " has eaten " + other_fish.name + ". Size: " + str(old_area) + " -> " + str(new_area))
         other_fish.die()
 
 
