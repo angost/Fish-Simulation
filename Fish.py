@@ -11,10 +11,11 @@ class Fish:
         self.name = name
         self.base_size = base_size
         self.size = self.base_size
-        self.color = color
+        # self.color = color
         self.speed = speed
         self.max_hunger = max_hunger
-        self.hunger = round(uniform(max_hunger*2/3, max_hunger), 2)
+        self.prey_hunger = max_hunger/2
+        self.change_hunger(round(uniform(max_hunger*2/3, max_hunger), 2))
         self.pos = [randint(0, WIDTH), randint(0, HEIGHT)]
         self.direction_horizontal = 1   # 1 = swimming right, -1 = swimming left
         self.direction_vertical = 1     # 1 = swimming down, -1 = swimming up
@@ -29,12 +30,12 @@ class Fish:
 
     def swim(self, all_fish):
         if self.alive:
-            if self.hunger >= self.max_hunger/2:
+            if self.hunger >= self.prey_hunger:
                 self.neutral_swim()
             else:
                 self.follow_swim(all_fish)
 
-            self.hunger -= (self.max_hunger * 0.0001)*self.speed
+            self.change_hunger(self.hunger - (self.max_hunger * 0.0001)*self.speed)
             if self.hunger <= 0:
                 self.die()
 
@@ -112,11 +113,56 @@ class Fish:
         self.size = new_size
 
 
+    def change_hunger(self, new_hunger):
+        new_hunger = max(0, new_hunger)
+        new_hunger = min(self.max_hunger, new_hunger)
+        self.hunger = new_hunger
+
+        self.update_color()
+
+
+    def update_color(self):
+        '''Updates fish color according to its hunger level.\n
+        Green - full hunger bar, yellow - less full, red - getting to prey lvl, black - preying'''
+        # Two possible values - bigger ex.227, smaller ex.61; Two components are always the same
+        # G bigger - green; R,G bigger - yellow; R bigger - red; B bigger - blue; etc.
+        green =     (61, 227, 61)
+        yellow =    (227, 227, 61)
+        red =       (227, 61, 61)
+        black =     (0,0,0)
+
+        if self.hunger <= self.prey_hunger:
+            new_color = black
+        elif self.hunger == self.max_hunger:
+            new_color = green
+        # Calculate proper color
+        else:
+            # Calculating how many steps from red (prey color) have to be taken; red -> yellow -> green
+            max_nr_of_color_steps = abs(green[0] - yellow[0]) + abs(yellow[1] - red[1])
+            max_nr_of_hunger_steps = self.max_hunger - self.prey_hunger
+            component_steps_left = round((self.hunger - self.prey_hunger) * (max_nr_of_color_steps/max_nr_of_hunger_steps))
+            new_color = list(red)
+
+            # Making as many component steps as needed
+            # red -> yellow
+            max_G_component_steps = yellow[1] - red[1]
+            new_color[1] += min(max_G_component_steps, component_steps_left)
+            component_steps_left = max(0, component_steps_left - max_G_component_steps)
+            # yellow -> green
+            max_R_component_steps = yellow[0] - green[0]
+            new_color[0] -= min(max_R_component_steps, component_steps_left)
+            component_steps_left = max(0, component_steps_left - max_R_component_steps)
+
+            new_color = tuple(new_color)
+
+        self.color = new_color
+
+
     def eat_other_fish(self, other_fish):
         ''' Fish gets more hunger and grows. Other fish dies.'''
         old_size = self.size
 
-        self.hunger = max(self.hunger + other_fish.size, self.max_hunger)
+        self.change_hunger(self.hunger + other_fish.size)
         # Fish absorbs eaten fish area
         self.grow_to_size(sqrt(((pi * self.size**2) + (pi * other_fish.size**2))/pi))
         self.following_target = None
