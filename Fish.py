@@ -49,8 +49,8 @@ class Fish:
 
 
     def follow_swim(self, all_fish):
-        # FINDING TARGET (nearest smaller fish) if not found already
-        if not self.following_target:
+        # FINDING TARGET (nearest smaller fish) if not found already or previous target died
+        if not self.following_target or not self.following_target.alive:
             self.following_target = self.find_nearest_target(all_fish)
             if self.following_target:
                 print(self.name + " is hungry...")
@@ -77,7 +77,7 @@ class Fish:
 
 
     def find_nearest_target(self, all_fish: list):
-        # Target - alive smaller fish
+        # Target - alive! smaller fish
         # TIP: self doesn't end up in targets list beaceuse its not true that self.size < self.size; if lookingfor targets method were to change, self not being in targets list has to be guaranteed
         targets = [fish for fish in all_fish if (fish.alive and fish.size < self.size)]
         # Returns None when there are no smaller fish
@@ -85,7 +85,6 @@ class Fish:
             return None
         nearest_target = min(targets, key = lambda fish : calculate_pos_difference(self.pos, fish.pos))
         return nearest_target
-        # TODO: ASSURE TARGET IS NOT DEAD
 
 
     def check_if_overlapping(self, other_fish):
