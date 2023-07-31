@@ -39,6 +39,7 @@ def main():
         screen.fill((42, 108, 212))
         for fish in all_fish:
             pygame.draw.circle(screen, fish.color, fish.pos, fish.size)
+            screen.blit(fish.img, fish.pos)
             fish.swim(all_fish)
 
         pygame.display.flip()

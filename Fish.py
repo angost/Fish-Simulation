@@ -1,6 +1,7 @@
 
 from random import randint, randrange, uniform
 from math import sqrt, pi
+import pygame
 # WIDTH = 800
 # HEIGHT = 600
 WIDTH = 1024
@@ -12,6 +13,9 @@ class Fish:
         self.base_size = base_size
         self.size = self.base_size
         # self.color = color
+        self.img_path = "assets/blue_fish.png"
+        self.img = pygame.image.load(self.img_path)
+        self.img = pygame.transform.scale(self.img, (self.size, self.size))
         self.speed = speed
         self.max_hunger = max_hunger
         self.prey_hunger = max_hunger/2
@@ -112,10 +116,14 @@ class Fish:
 
     def grow_by(self, amount):
         self.size += amount
+        self.img = pygame.image.load(self.img_path)
+        self.img = pygame.transform.scale(self.img, (self.size, self.size))
 
 
     def grow_to_size(self, new_size):
         self.size = new_size
+        self.img = pygame.image.load(self.img_path)
+        self.img = pygame.transform.scale(self.img, (self.size, self.size))
 
 
     def change_hunger(self, new_hunger):
