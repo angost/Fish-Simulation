@@ -52,23 +52,30 @@ class Fish:
         # Finding target (nearest smaller fish) if not found already
         if not self.following_target:
             self.following_target = self.find_nearest_target(all_fish)
-        # Following the target - changing coordinates to be closer to it
-        # x axis
-        if self.following_target.pos[0] < self.pos[0]:
-            self.pos[0] -=  self.speed
+        # Did not find a target (self.target is still None)
+        if not self.following_target:
+            self.neutral_swim()
         else:
-            self.pos[0] +=  self.speed
-        # y axis
-        if self.following_target.pos[1] < self.pos[1]:
-            self.pos[1] -=  self.speed
-        else:
-            self.pos[1] +=  self.speed
+            # Following the target - changing coordinates to be closer to it
+            # x axis
+            if self.following_target.pos[0] < self.pos[0]:
+                self.pos[0] -=  self.speed
+            else:
+                self.pos[0] +=  self.speed
+            # y axis
+            if self.following_target.pos[1] < self.pos[1]:
+                self.pos[1] -=  self.speed
+            else:
+                self.pos[1] +=  self.speed
 
 
     def find_nearest_target(self, all_fish: list):
         # Target - smaller fish
         # self doesn't end up in targets list beaceuse its not true that self.size < self.size; if lookingfor targets method were to change, self not being in targets list has to be guaranteed
         targets = [fish for fish in all_fish if fish.size < self.size]
+        # Returns None when there are no smaller fish
+        if len(targets) == 0:
+            return None
         nearest_target = min(targets, key = lambda fish : calculate_distance(self.pos, fish.pos))
         return nearest_target
         # TODO: ASSURE TARGET IS NOT DEAD
