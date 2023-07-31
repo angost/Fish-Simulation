@@ -10,10 +10,9 @@ def fish_setup(nr_of_fish):
     for fish_index in range(nr_of_fish):
         fish.append(Fish
                     (choice(fish_names),
+                    "assets/blue_fish.png",
                     randint(1,50),
-                    (randint(0,255), randint(0,255), randint(0,255)),
-                    randint(1,5)/2,
-                    100))
+                    randint(1,5)/2,))
     return fish
 
 

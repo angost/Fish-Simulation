@@ -8,12 +8,11 @@ WIDTH = 1024
 HEIGHT = 768
 
 class Fish:
-    def __init__(self, name: str, base_size: float, color: tuple[int, int, int], speed: float, max_hunger: float):
+    def __init__(self, name: str, img_path: str, base_size: float, speed: float, max_hunger: float = 100):
         self.name = name
         self.base_size = base_size
         self.size = self.base_size
-        # self.color = color
-        self.img_path = "assets/blue_fish.png"
+        self.img_path = img_path
         self.img = pygame.image.load(self.img_path)
         self.img = pygame.transform.scale(self.img, (self.size, self.size))
         self.speed = speed
