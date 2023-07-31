@@ -1,5 +1,5 @@
 
-from random import randint, uniform
+from random import randint, randrange, uniform
 from math import sqrt, pi
 # WIDTH = 800
 # HEIGHT = 600
@@ -16,6 +16,7 @@ class Fish:
         self.max_hunger = max_hunger
         self.prey_hunger = max_hunger/2
         self.change_hunger(round(uniform(max_hunger*2/3, max_hunger), 2))
+        # self.change_hunger(randrange(round(max_hunger*2/3), max_hunger, 5))
         self.pos = [randint(0, WIDTH), randint(0, HEIGHT)]
         self.direction_horizontal = 1   # 1 = swimming right, -1 = swimming left
         self.direction_vertical = 1     # 1 = swimming down, -1 = swimming up
@@ -52,8 +53,8 @@ class Fish:
 
 
     def follow_swim(self, all_fish):
-        # FINDING TARGET (nearest smaller fish) if not found already or previous target died
-        if not self.following_target or not self.following_target.alive:
+        # FINDING TARGET (nearest smaller fish) if not found already or previous target died or previous target got too big
+        if not self.following_target or not self.following_target.alive or self.following_target.size > self.size:
             self.following_target = self.find_nearest_target(all_fish)
             if self.following_target:
                 print(self.name + " is hungry...")
