@@ -17,21 +17,24 @@ class Fish:
         self.direction_vertical = 1
         self.alive = True
 
+
     def __str__(self):
         fish_info = self.name.ljust(20) + " Size: " + str(self.size) + " Speed: " + str(self.speed) + " Hunger: " + str(self.hunger)
         return fish_info
 
-    def swim(self):
+
+    def swim(self, all_fish):
         if self.alive:
             if self.hunger >= self.max_hunger/2:
                 self.neutral_swim()
             else:
-                self.follow_swim()
+                self.follow_swim(all_fish)
 
-            self.hunger -= (self.max_hunger * 0.0001)*self.speed
+            self.hunger -= (self.max_hunger * 0.01)*self.speed
             if self.hunger <= 0:
                 self.alive = False
                 print("x_x")
+
 
     def neutral_swim(self):
         self.pos[0] += self.direction_horizontal * self.speed
@@ -43,5 +46,15 @@ class Fish:
         if self.pos[1] >= HEIGHT or self.pos[1] <= 0:
             self.direction_vertical *= -1
 
-    def follow_swim(self):
+
+    def follow_swim(self, all_fish):
+        # Targets - smaller fish
+        targets = [fish for fish in all_fish if fish.size < self.size]
+        nearest_target = min(targets, key = lambda fish : calculate_distance(self.pos, fish.pos))
         pass
+        # zapisac jako atrybut sledzona rybe; wykonywac to co wyzej tylko jesli nie ma sledzoenj ryby;
+        # zmieniac wspolrzedne tak zeby zrownac sie z targetem
+
+
+def calculate_distance(pos1: list[float, float], pos2: list[float, float]):
+    return abs(pos1[0] - pos2[0]) + abs(pos1[1] - pos2[1])

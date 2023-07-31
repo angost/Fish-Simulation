@@ -24,9 +24,9 @@ def main():
     screen = pygame.display.set_mode([WIDTH, HEIGHT])
     clock = pygame.time.Clock()
 
-    fish = fish_setup(10)
-    for f in fish:
-        print(f)
+    all_fish = fish_setup(10)
+    for fish in all_fish:
+        print(fish)
 
     main_loop = True
     while main_loop:
@@ -35,9 +35,9 @@ def main():
                 main_loop = False
 
         screen.fill((42, 108, 212))
-        for f in fish:
-            pygame.draw.circle(screen, f.color, f.pos, f.size)
-            f.swim()
+        for fish in all_fish:
+            pygame.draw.circle(screen, fish.color, fish.pos, fish.size)
+            fish.swim(all_fish)
 
         pygame.display.flip()
         clock.tick(45)
