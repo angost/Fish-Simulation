@@ -26,7 +26,7 @@ def main():
     screen = pygame.display.set_mode([WIDTH, HEIGHT])
     clock = pygame.time.Clock()
 
-    all_fish = fish_setup(10)
+    all_fish = fish_setup(20)
     for fish in all_fish:
         print(fish)
 
@@ -37,7 +37,6 @@ def main():
                 main_loop = False
 
         screen.fill((42, 108, 212))
-        # TODO: dead fish should disappear from screen
         for fish in all_fish:
             pygame.draw.circle(screen, fish.color, fish.pos, fish.size)
             fish.swim(all_fish)

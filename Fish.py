@@ -39,6 +39,10 @@ class Fish:
             self.change_hunger(self.hunger - (self.max_hunger * 0.0001)*self.speed)
             if self.hunger <= 0:
                 self.die()
+        else:
+            # Falling to the bottom of the screen
+            if self.pos[1] < HEIGHT:
+                self.pos[1] += 1
 
 
     def neutral_swim(self):
