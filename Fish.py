@@ -34,8 +34,7 @@ class Fish:
 
             self.hunger -= (self.max_hunger * 0.0001)*self.speed
             if self.hunger <= 0:
-                self.alive = False
-                print("x_x")
+                self.die()
 
 
     def neutral_swim(self):
@@ -76,9 +75,9 @@ class Fish:
 
 
     def find_nearest_target(self, all_fish: list):
-        # Target - smaller fish
-        # self doesn't end up in targets list beaceuse its not true that self.size < self.size; if lookingfor targets method were to change, self not being in targets list has to be guaranteed
-        targets = [fish for fish in all_fish if fish.size < self.size]
+        # Target - alive smaller fish
+        # TIP: self doesn't end up in targets list beaceuse its not true that self.size < self.size; if lookingfor targets method were to change, self not being in targets list has to be guaranteed
+        targets = [fish for fish in all_fish if (fish.alive and fish.size < self.size)]
         # Returns None when there are no smaller fish
         if len(targets) == 0:
             return None
@@ -99,6 +98,7 @@ class Fish:
 
     def die(self):
         self.alive = False
+        print("x_x")
 
 
     def grow_by(self, amount):
@@ -110,8 +110,10 @@ class Fish:
 
 
     def eat_other_fish(self, other_fish):
+        # TODO: dead fish should disappear from screen
         # Fish gets more hunger and grows. Other fish dies.
         other_fish.die()
+        self.following_target = None
         self.hunger = max(self.hunger + other_fish.size, self.max_hunger)
         # Fish absorbs eaten fish area
         self.grow_to_size(sqrt(((pi * self.size**2) + (pi * other_fish.size**2))/pi))
