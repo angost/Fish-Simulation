@@ -8,7 +8,7 @@ WIDTH = 1024
 HEIGHT = 768
 
 class Fish:
-    def __init__(self, name: str, img_path: str, base_size: float, speed: float, max_hunger: float = 100):
+    def __init__(self, name: str, img_path: str, base_size: list[float, float], speed: float, max_hunger: float = 100):
         self.name = name
         self.base_size = base_size
         self.size = self.base_size
@@ -20,7 +20,9 @@ class Fish:
         self.prey_hunger = max_hunger/2
         self.change_hunger(round(uniform(max_hunger*2/3, max_hunger), 2))
         # self.change_hunger(randrange(round(max_hunger*2/3), max_hunger, 5))
+        # self.pos = center of the image
         self.pos = [randint(0, WIDTH), randint(0, HEIGHT)]
+        self.img_pos = [self.pos[0] - self.size[0]/2, self.pos[1] - self.size[1]/2]
         self.direction_horizontal = 1   # 1 = swimming right, -1 = swimming left
         self.direction_vertical = 1     # 1 = swimming down, -1 = swimming up
         self.alive = True
@@ -50,7 +52,9 @@ class Fish:
 
     def neutral_swim(self):
         self.pos[0] += self.direction_horizontal * self.speed/2
+        self.img_pos[0] += self.direction_horizontal * self.speed/2
         self.pos[1] += self.direction_vertical * self.speed/2
+        self.img_pos[1] += self.direction_vertical * self.speed/2
         # print(self.pos[0])
         # Turn if reached screen border
         if self.pos[0] >= WIDTH or self.pos[0] <= 0:
@@ -74,13 +78,17 @@ class Fish:
             # x axis
             if self.following_target.pos[0] < self.pos[0]:
                 self.pos[0] -= self.speed/2
+                self.img_pos[0] -= self.speed/2
             else:
                 self.pos[0] += self.speed/2
+                self.img_pos[0] += self.speed/2
             # y axis
             if self.following_target.pos[1] < self.pos[1]:
                 self.pos[1] -= self.speed/2
+                self.img_pos[1] -= self.speed/2
             else:
                 self.pos[1] += self.speed/2
+                self.img_pos[1] += self.speed/2
 
             # CHECKING IF FISH CAUGHT UP THE TARGET
             if self.check_if_overlapping(self.following_target):
@@ -99,9 +107,21 @@ class Fish:
 
 
     def check_if_overlapping(self, other_fish):
-        # For fish as circles miniumum distance without overlapping is size (radius) of one fish + size (radius) of other fish
-        # Checking if distance between fish is smaller than that
-        return self.calculate_distance(other_fish) < self.size + other_fish.size
+        if self.img_pos[0] < other_fish.img_pos[0]:
+            left_object, right_object = self, other_fish
+        else:
+            left_object, right_object = other_fish, self
+        # Right side of left object overlaps with left side of right object
+        horizontal_overlap = left_object.img_pos[0] + left_object.size[0] > right_object.img_pos[0]
+
+        if self.img_pos[1] < other_fish.img_pos[1]:
+            top_object, bottom_object = self, other_fish
+        else:
+            top_object, bottom_object = other_fish, self
+        # Bottom side of top object overlaps with top side of bottom object
+        vertical_overlap = top_object.img_pos[1] + top_object.size[1] > bottom_object.img_pos[1]
+
+        return horizontal_overlap and vertical_overlap
 
 
     def calculate_distance(self, other_fish):
