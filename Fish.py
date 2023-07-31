@@ -1,6 +1,6 @@
 
 from random import randint
-from math import sqrt
+from math import sqrt, pi
 WIDTH = 800
 HEIGHT = 600
 
@@ -101,14 +101,20 @@ class Fish:
         self.alive = False
 
 
-    def grow(self, amount):
+    def grow_by(self, amount):
         self.size += amount
 
 
+    def grow_to_size(self, new_size):
+        self.size = new_size
 
 
-    #def eat_fish(other)
-    # area1 + area2 -> calc radius -> this is new radius
+    def eat_other_fish(self, other_fish):
+        # Fish gets more hunger and grows. Other fish dies.
+        other_fish.die()
+        self.hunger = max(self.hunger + other_fish.size, self.max_hunger)
+        # Fish absorbs eaten fish area
+        self.grow_to_size(sqrt(((pi * self.size**2) + (pi * other_fish.size**2))/pi))
 
 
 
