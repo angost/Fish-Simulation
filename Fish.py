@@ -31,15 +31,15 @@ class Fish:
             else:
                 self.follow_swim(all_fish)
 
-            self.hunger -= (self.max_hunger * 0.01)*self.speed
+            self.hunger -= (self.max_hunger * 0.0001)*self.speed
             if self.hunger <= 0:
                 self.alive = False
                 print("x_x")
 
 
     def neutral_swim(self):
-        self.pos[0] += self.direction_horizontal * self.speed
-        self.pos[1] += self.direction_vertical * self.speed
+        self.pos[0] += self.direction_horizontal * self.speed/2
+        self.pos[1] += self.direction_vertical * self.speed/2
         # print(self.pos[0])
         # Turn if reached screen border
         if self.pos[0] >= WIDTH or self.pos[0] <= 0:
@@ -59,14 +59,14 @@ class Fish:
             # Following the target - changing coordinates to be closer to it
             # x axis
             if self.following_target.pos[0] < self.pos[0]:
-                self.pos[0] -=  self.speed
+                self.pos[0] -= self.speed/2
             else:
-                self.pos[0] +=  self.speed
+                self.pos[0] += self.speed/2
             # y axis
             if self.following_target.pos[1] < self.pos[1]:
-                self.pos[1] -=  self.speed
+                self.pos[1] -= self.speed/2
             else:
-                self.pos[1] +=  self.speed
+                self.pos[1] += self.speed/2
 
 
     def find_nearest_target(self, all_fish: list):
