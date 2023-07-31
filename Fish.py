@@ -22,11 +22,10 @@ class Fish:
 
     def swim(self):
         if self.alive:
-            self.pos[0] += self.direction
-            # self.pos[0] += self.direction * self.speed
+            self.pos[0] += self.direction * self.speed
             print(self.pos[0])
             # Turn if reached screen border
-            if self.pos[0] == WIDTH or self.pos[0] == 0:
+            if self.pos[0] >= WIDTH or self.pos[0] <= 0:
                 self.direction *= -1
 
             self.hunger -= self.max_hunger * 0.05
