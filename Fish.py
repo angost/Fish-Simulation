@@ -1,5 +1,6 @@
 
 from random import randint
+from math import sqrt
 WIDTH = 800
 HEIGHT = 600
 
@@ -49,14 +50,15 @@ class Fish:
 
 
     def follow_swim(self, all_fish):
-        # Finding target (nearest smaller fish) if not found already
+        # FINDING TARGET (nearest smaller fish) if not found already
         if not self.following_target:
             self.following_target = self.find_nearest_target(all_fish)
-        # Did not find a target (self.target is still None)
+        # Did not find a target (self.target is still None) -> do neutral swim
         if not self.following_target:
             self.neutral_swim()
+        # Found a target -> follow it
         else:
-            # Following the target - changing coordinates to be closer to it
+            # Changing coordinates to be closer to target
             # x axis
             if self.following_target.pos[0] < self.pos[0]:
                 self.pos[0] -= self.speed/2
@@ -68,6 +70,10 @@ class Fish:
             else:
                 self.pos[1] += self.speed/2
 
+            # CHECKING IF FISH CAUGHT UP THE TARGET
+            if self.check_if_overlapping(self.following_target):
+                self.eat_other_fish(self.following_target)
+
 
     def find_nearest_target(self, all_fish: list):
         # Target - smaller fish
@@ -76,10 +82,35 @@ class Fish:
         # Returns None when there are no smaller fish
         if len(targets) == 0:
             return None
-        nearest_target = min(targets, key = lambda fish : calculate_distance(self.pos, fish.pos))
+        nearest_target = min(targets, key = lambda fish : calculate_pos_difference(self.pos, fish.pos))
         return nearest_target
         # TODO: ASSURE TARGET IS NOT DEAD
 
 
-def calculate_distance(pos1: list[float, float], pos2: list[float, float]):
+    def check_if_overlapping(self, other_fish):
+        # For fish as circles miniumum distance without overlapping is size (radius) of one fish + size (radius) of other fish
+        # Checking if distance between fish is smaller than that
+        return self.calculate_distance(other_fish) < self.size + other_fish.size
+
+
+    def calculate_distance(self, other_fish):
+        return sqrt((self.pos[0] - other_fish.pos[0])**2 + (self.pos[1] - other_fish.pos[1])**2)
+
+
+    def die(self):
+        self.alive = False
+
+
+    def grow(self, amount):
+        self.size += amount
+
+
+
+
+    #def eat_fish(other)
+    # area1 + area2 -> calc radius -> this is new radius
+
+
+
+def calculate_pos_difference(pos1: list[float, float], pos2: list[float, float]):
     return abs(pos1[0] - pos2[0]) + abs(pos1[1] - pos2[1])
