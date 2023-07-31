@@ -1,11 +1,21 @@
 
 import pygame
 from random import randint, choice
-from Fish import Fish, BlueFish, SwordFish
+from Fish import Fish, BlueFish, SwordFish, CatFish, NemoFish, GoldFish, FishGroup, PufferFish, TropicalFish
 
 def fish_setup(nr_of_fish):
     fish = []
-    available_fish = {0: BlueFish, 1: SwordFish}
+    available_fish = {
+        0: BlueFish,
+        1: SwordFish,
+        2: CatFish,
+        3: NemoFish,
+        4: GoldFish,
+        5: FishGroup,
+        6: PufferFish,
+        7: TropicalFish
+        }
+
     if len(available_fish) != 0:
         for fish_index in range(nr_of_fish):
             drawn_fish_kind = randint(0, len(available_fish)-1)
@@ -23,7 +33,7 @@ def main():
     screen = pygame.display.set_mode([WIDTH, HEIGHT])
     clock = pygame.time.Clock()
 
-    all_fish = fish_setup(10)
+    all_fish = fish_setup(20)
     for fish in all_fish:
         print(fish)
 

@@ -205,7 +205,11 @@ class Fish:
 
     def die(self):
         self.alive = False
+        self.img_path = "assets/fish_bones.png"
+        self.img = pygame.image.load(self.img_path)
+        self.img = pygame.transform.scale(self.img, (self.size[0], self.size[1]))
         print("x_x")
+
 
 class BlueFish(Fish):
     def __init__(self):
@@ -213,4 +217,28 @@ class BlueFish(Fish):
 
 class SwordFish(Fish):
     def __init__(self):
-        super().__init__("Sword-fish", "assets/sword_fish.png", [80, 60], 1.5)
+        super().__init__("Sword-fish", "assets/sword_fish.png", [80, 60], 2.5)
+
+class CatFish(Fish):
+    def __init__(self):
+        super().__init__("Catfish", "assets/catfish.png", [80, 50], 1)
+
+class NemoFish(Fish):
+    def __init__(self):
+        super().__init__("Nemo", "assets/clown_fish.png", [50, 50], 2)
+
+class GoldFish(Fish):
+    def __init__(self):
+        super().__init__("Goldfish", "assets/goldfish.png", [35, 35], 1)
+
+class FishGroup(Fish):
+    def __init__(self):
+        super().__init__("Fish group", "assets/fish_group2.png", [80, 80], 2)
+
+class PufferFish(Fish):
+    def __init__(self):
+        super().__init__("Puffer-fish", "assets/puffer_fish.png", [90, 90], 1)
+
+class TropicalFish(Fish):
+    def __init__(self):
+        super().__init__("Tropical fish", "assets/tropical_fish.png", [50, 40], 1.5)
