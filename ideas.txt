@@ -1,2 +1,6 @@
 
 Random event - it is really an aquarium, which the cat is watching -> a cat paw vertically into the tank and takes (kills) fish on its way
+
+VISUALISATION:
+A. text is displayed on fish - its size and hunger (always/after hovering with mouse)
+B. base - all fish are green; when they get hungrier they slowly turn yellow and then red; when hunger reaches certain level and fish starts preying -> turns black.

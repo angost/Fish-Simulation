@@ -52,6 +52,8 @@ class Fish:
         # FINDING TARGET (nearest smaller fish) if not found already
         if not self.following_target:
             self.following_target = self.find_nearest_target(all_fish)
+            if self.following_target:
+                print(self.name + " is hungry...")
         # Did not find a target (self.target is still None) -> do neutral swim
         if not self.following_target:
             self.neutral_swim()
@@ -110,14 +112,16 @@ class Fish:
 
 
     def eat_other_fish(self, other_fish):
-        # TODO: dead fish should disappear from screen
-        # Fish gets more hunger and grows. Other fish dies.
-        other_fish.die()
-        self.following_target = None
+        ''' Fish gets more hunger and grows. Other fish dies.'''
+        old_size = self.size
+
         self.hunger = max(self.hunger + other_fish.size, self.max_hunger)
         # Fish absorbs eaten fish area
         self.grow_to_size(sqrt(((pi * self.size**2) + (pi * other_fish.size**2))/pi))
+        self.following_target = None
 
+        print("Dziab!!\t" + self.name + " has eaten " + other_fish.name + ". Size: " + str(old_size) + " -> " + str(self.size))
+        other_fish.die()
 
 
 def calculate_pos_difference(pos1: list[float, float], pos2: list[float, float]):
