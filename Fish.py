@@ -1,8 +1,10 @@
 
-from random import randint
+from random import randint, uniform
 from math import sqrt, pi
-WIDTH = 800
-HEIGHT = 600
+# WIDTH = 800
+# HEIGHT = 600
+WIDTH = 1024
+HEIGHT = 768
 
 class Fish:
     def __init__(self, name: str, base_size: float, color: tuple[int, int, int], speed: float, max_hunger: float):
@@ -12,7 +14,7 @@ class Fish:
         self.color = color
         self.speed = speed
         self.max_hunger = max_hunger
-        self.hunger = max_hunger
+        self.hunger = round(uniform(max_hunger*2/3, max_hunger), 2)
         self.pos = [randint(0, WIDTH), randint(0, HEIGHT)]
         self.direction_horizontal = 1   # 1 = swimming right, -1 = swimming left
         self.direction_vertical = 1     # 1 = swimming down, -1 = swimming up

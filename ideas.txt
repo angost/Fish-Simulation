@@ -1,10 +1,30 @@
 
-Random event - it is really an aquarium, which the cat is watching -> a cat paw vertically into the tank and takes (kills) fish on its way
+FUNCTIONAL
+- different subclasses of Fish with different sizes, colors, pictures, swimming behaviour
+    ex. fish which swims in circles (robi osemki); fish which sometimes kills without being hungry; fish which moves very slowly, only withing small area; fish which only swims deep in the sea -> in general, different habitat depths
+- new fish being born (small eggs emerge from mother fish, after a while become normal adult fish) / emerging from out of the screen
 
 BETTER VISUALISATION:
 A. text is displayed on fish - its size and hunger (always/after hovering with mouse)
 B. base - all fish are green; when they get hungrier they slowly turn yellow and then red; when hunger reaches certain level and fish starts preying -> turns black.
 
 DECOR
-- When real fish pictures will be implemented -> dead fish changes into sceleton and falls to the bottom of screen; disappears after time
+- When real fish pictures will be implemented -> dead fish changes into sceleton and slowly falls to the bottom of screen; disappears after time
 - Sand and moving (:o :3 <333 !!!) alga at the bottom of screen
+
+EXTRAS
+Random event - it is really an aquarium, which the cat is watching -> a cat paw vertically into the tank and takes (kills) fish on its way
+
+
+
+ASSETS:
+Bones:
+https://www.flaticon.com/free-icon/fish-bone_2902686?term=fish+bones&related_id=2902686
+https://www.flaticon.com/free-icon/fish-bone_1064027?term=fish+bones&page=1&position=86&origin=search&related_id=1064027
+https://www.flaticon.com/free-icon/fish-bone_1889999?term=fish+bones&page=1&position=10&origin=search&related_id=1889999
+
+Fish:
+https://www.flaticon.com/free-icon/fish_2970068?term=fish&page=1&position=3&origin=search&related_id=2970068
+https://www.flaticon.com/free-icon/clown-fish_875011?term=fish&page=1&position=6&origin=search&related_id=875011
+https://www.flaticon.com/free-icon/fish_9433051?related_id=9433051
+https://www.flaticon.com/free-icon/fish_2952420?term=fish&page=1&position=35&origin=search&related_id=2952420

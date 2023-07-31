@@ -12,14 +12,16 @@ def fish_setup(nr_of_fish):
                     (choice(fish_names),
                     randint(1,50),
                     (randint(0,255), randint(0,255), randint(0,255)),
-                    randint(1,5),
+                    randint(1,5)/2,
                     100))
     return fish
 
 
 def main():
-    WIDTH = 800
-    HEIGHT = 600
+    # WIDTH = 800
+    # HEIGHT = 600
+    WIDTH = 1024
+    HEIGHT = 768
     pygame.init()
     screen = pygame.display.set_mode([WIDTH, HEIGHT])
     clock = pygame.time.Clock()
