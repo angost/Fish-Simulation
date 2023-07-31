@@ -10,7 +10,7 @@ def fish_setup(nr_of_fish):
     for fish_index in range(nr_of_fish):
         fish.append(Fish
                     (choice(fish_names),
-                    randint(1,300),
+                    randint(1,50),
                     (randint(0,255), randint(0,255), randint(0,255)),
                     randint(1,20),
                     randint(5,100)))
@@ -34,11 +34,12 @@ def main():
             if event.type == pygame.QUIT:
                 main_loop = False
 
-        fish[0].swim()
-
         screen.fill((42, 108, 212))
-        pygame.display.flip()
+        for f in fish:
+            pygame.draw.circle(screen, f.color, f.pos, f.size)
+            f.swim()
 
+        pygame.display.flip()
         clock.tick(45)
     pygame.quit()
 
