@@ -11,8 +11,7 @@ class Fish:
     def __init__(self, name: str, img_path: str, base_size: list[float, float], speed: float, max_hunger: float = 100):
         self.name = name
         # [width, height]
-        self.base_size = base_size
-        self.size = self.base_size
+        self.size = base_size
         self.img_path = img_path
         self.img = pygame.image.load(self.img_path)
         self.img = pygame.transform.scale(self.img, (self.size[0], self.size[1]))
@@ -34,6 +33,13 @@ class Fish:
         fish_info = self.name.ljust(20) + " Size: " + str(self.size) + " Speed: " + str(self.speed) + " Hunger: " + str(self.hunger)
         return fish_info
 
+    def change_pos(self, x_diff, y_diff):
+        self.pos[0] += x_diff
+        self.img_pos[0] += x_diff
+
+        self.pos[1] += y_diff
+        self.img_pos[1] += y_diff
+
 
     def swim(self, all_fish):
         if self.alive:
@@ -48,16 +54,11 @@ class Fish:
         else:
             # Falling to the bottom of the screen
             if self.pos[1] < HEIGHT:
-                self.pos[1] += 1
-                self.img_pos[1] += 1
+                self.change_pos(0, 1)
 
 
     def neutral_swim(self):
-        self.pos[0] += self.direction_horizontal * self.speed/2
-        self.img_pos[0] += self.direction_horizontal * self.speed/2
-        self.pos[1] += self.direction_vertical * self.speed/2
-        self.img_pos[1] += self.direction_vertical * self.speed/2
-        # print(self.pos[0])
+        self.change_pos(self.direction_horizontal * self.speed/2, self.direction_vertical * self.speed/2)
         # Turn if reached screen border
         if self.pos[0] >= WIDTH or self.pos[0] <= 0:
             self.direction_horizontal *= -1
@@ -79,18 +80,14 @@ class Fish:
             # Changing coordinates to be closer to target
             # x axis
             if self.following_target.pos[0] < self.pos[0]:
-                self.pos[0] -= self.speed/2
-                self.img_pos[0] -= self.speed/2
+                self.change_pos(-self.speed/2, 0)
             else:
-                self.pos[0] += self.speed/2
-                self.img_pos[0] += self.speed/2
+                self.change_pos(self.speed/2, 0)
             # y axis
             if self.following_target.pos[1] < self.pos[1]:
-                self.pos[1] -= self.speed/2
-                self.img_pos[1] -= self.speed/2
+                self.change_pos(0, -self.speed/2)
             else:
-                self.pos[1] += self.speed/2
-                self.img_pos[1] += self.speed/2
+                self.change_pos(0, self.speed/2)
 
             # CHECKING IF FISH CAUGHT UP THE TARGET
             if self.check_if_overlapping(self.following_target):
@@ -105,7 +102,7 @@ class Fish:
         # Returns None when there are no smaller fish
         if len(targets) == 0:
             return None
-        nearest_target = min(targets, key = lambda fish : calculate_pos_difference(self.pos, fish.pos))
+        nearest_target = min(targets, key = lambda fish : self.calculate_distance(fish))
         return nearest_target
 
 
@@ -140,6 +137,8 @@ class Fish:
         self.size = new_size
         self.img = pygame.image.load(self.img_path)
         self.img = pygame.transform.scale(self.img, (self.size[0], self.size[1]))
+        # Also updates img_pos (when growing, center stays in the same place, but top left corner of img changes)
+        self.img_pos = [self.pos[0] - self.size[0]/2, self.pos[1] - self.size[1]/2]
 
 
     def area(self):
@@ -206,7 +205,3 @@ class Fish:
 
         print("Dziab!!\t" + self.name + " has eaten " + other_fish.name + ". Size: " + str(old_area) + " -> " + str(new_area))
         other_fish.die()
-
-
-def calculate_pos_difference(pos1: list[float, float], pos2: list[float, float]):
-    return abs(pos1[0] - pos2[0]) + abs(pos1[1] - pos2[1])
