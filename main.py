@@ -1,19 +1,16 @@
 
 import pygame
 from random import randint, choice
-from Fish import Fish
+from Fish import Fish, BlueFish, SwordFish
 
 def fish_setup(nr_of_fish):
     fish = []
-    fish_names = ("Losos", "Karp", "Pstrag", "Dorsz", "Rozdymka", "Miecznik", "Nemo")
+    available_fish = {0: BlueFish, 1: SwordFish}
+    if len(available_fish) != 0:
+        for fish_index in range(nr_of_fish):
+            drawn_fish_kind = randint(0, len(available_fish)-1)
+            fish.append(available_fish[drawn_fish_kind]())
 
-    for fish_index in range(nr_of_fish):
-        size = randint(1,50)
-        fish.append(Fish
-                    (choice(fish_names),
-                    "assets/blue_fish.png",
-                    [size * 1.5, size],
-                    randint(1,5)/2))
     return fish
 
 
@@ -26,7 +23,7 @@ def main():
     screen = pygame.display.set_mode([WIDTH, HEIGHT])
     clock = pygame.time.Clock()
 
-    all_fish = fish_setup(20)
+    all_fish = fish_setup(10)
     for fish in all_fish:
         print(fish)
 

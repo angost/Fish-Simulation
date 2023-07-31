@@ -33,6 +33,7 @@ class Fish:
         fish_info = self.name.ljust(20) + " Size: " + str(self.size) + " Speed: " + str(self.speed) + " Hunger: " + str(self.hunger)
         return fish_info
 
+
     def change_pos(self, x_diff, y_diff):
         self.pos[0] += x_diff
         self.img_pos[0] += x_diff
@@ -128,11 +129,6 @@ class Fish:
         return sqrt((self.pos[0] - other_fish.pos[0])**2 + (self.pos[1] - other_fish.pos[1])**2)
 
 
-    def die(self):
-        self.alive = False
-        print("x_x")
-
-
     def grow_to_size(self, new_size: list[float, float]):
         self.size = new_size
         self.img = pygame.image.load(self.img_path)
@@ -200,8 +196,21 @@ class Fish:
         new_w = new_h * w_to_h
         self.grow_to_size([new_w, new_h])
 
-        self.change_hunger(self.hunger + other_fish.area())
+        self.change_hunger(self.hunger + sqrt(other_fish.area()))
         self.following_target = None
 
         print("Dziab!!\t" + self.name + " has eaten " + other_fish.name + ". Size: " + str(old_area) + " -> " + str(new_area))
         other_fish.die()
+
+
+    def die(self):
+        self.alive = False
+        print("x_x")
+
+class BlueFish(Fish):
+    def __init__(self):
+        super().__init__("Bluefish", "assets/blue_fish.png", [35, 35], 1)
+
+class SwordFish(Fish):
+    def __init__(self):
+        super().__init__("Sword-fish", "assets/sword_fish.png", [80, 60], 1.5)
