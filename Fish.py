@@ -13,9 +13,10 @@ class Fish:
         self.max_hunger = max_hunger
         self.hunger = max_hunger
         self.pos = [randint(0, WIDTH), randint(0, HEIGHT)]
-        self.direction_horizontal = 1
-        self.direction_vertical = 1
+        self.direction_horizontal = 1   # 1 = swimming right, -1 = swimming left
+        self.direction_vertical = 1     # 1 = swimming down, -1 = swimming up
         self.alive = True
+        self.following_target = None
 
 
     def __str__(self):
@@ -48,12 +49,29 @@ class Fish:
 
 
     def follow_swim(self, all_fish):
-        # Targets - smaller fish
+        # Finding target (nearest smaller fish) if not found already
+        if not self.following_target:
+            self.following_target = self.find_nearest_target(all_fish)
+        # Following the target - changing coordinates to be closer to it
+        # x axis
+        if self.following_target.pos[0] < self.pos[0]:
+            self.pos[0] -=  self.speed
+        else:
+            self.pos[0] +=  self.speed
+        # y axis
+        if self.following_target.pos[1] < self.pos[1]:
+            self.pos[1] -=  self.speed
+        else:
+            self.pos[1] +=  self.speed
+
+
+    def find_nearest_target(self, all_fish: list):
+        # Target - smaller fish
+        # self doesn't end up in targets list beaceuse its not true that self.size < self.size; if lookingfor targets method were to change, self not being in targets list has to be guaranteed
         targets = [fish for fish in all_fish if fish.size < self.size]
         nearest_target = min(targets, key = lambda fish : calculate_distance(self.pos, fish.pos))
-        pass
-        # zapisac jako atrybut sledzona rybe; wykonywac to co wyzej tylko jesli nie ma sledzoenj ryby;
-        # zmieniac wspolrzedne tak zeby zrownac sie z targetem
+        return nearest_target
+        # TODO: ASSURE TARGET IS NOT DEAD
 
 
 def calculate_distance(pos1: list[float, float], pos2: list[float, float]):
