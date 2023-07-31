@@ -12,7 +12,7 @@ def fish_setup(nr_of_fish):
                     (choice(fish_names),
                     randint(1,50),
                     (randint(0,255), randint(0,255), randint(0,255)),
-                    randint(1,10),
+                    randint(1,5),
                     100))
     return fish
 
