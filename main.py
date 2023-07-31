@@ -31,6 +31,8 @@ def main():
     HEIGHT = 768
     pygame.init()
     screen = pygame.display.set_mode([WIDTH, HEIGHT])
+    transparent_surface = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
+
     clock = pygame.time.Clock()
 
     all_fish = fish_setup(20)
@@ -44,10 +46,13 @@ def main():
                 main_loop = False
 
         screen.fill((42, 108, 212))
+        transparent_surface.fill((42, 108, 212))
         for fish in all_fish:
-            fish.swim(all_fish)
-            pygame.draw.circle(screen, fish.color, fish.pos, max(fish.size)/2)
+            pygame.draw.circle(transparent_surface, tuple(list(fish.color) + [190]), fish.pos, max(fish.size)/2)
+        screen.blit(transparent_surface, (0, 0))
+        for fish in all_fish:
             screen.blit(fish.img, fish.img_pos)
+            fish.swim(all_fish)
 
         pygame.display.flip()
         clock.tick(45)
