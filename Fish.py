@@ -33,9 +33,9 @@ class Fish(AreaTarget):
     def swim(self, all_fish):
         if self.alive:
             if self.hunger >= self.prey_hunger:
-                self.neutral_swim()
+                self.neutral_behaviour()
             else:
-                self.follow_swim(all_fish)
+                self.follow_behaviour(all_fish)
 
             self.change_hunger(self.hunger - (self.max_hunger * 0.0001)*self.speed)
             if self.hunger <= 0:
@@ -46,7 +46,7 @@ class Fish(AreaTarget):
                 self.change_pos_by(0, 1)
 
 
-    def neutral_swim(self):
+    def neutral_behaviour(self):
         self.change_pos_by(self.direction_horizontal * self.speed/2, self.direction_vertical * self.speed/2)
         # Turn if reached screen border
         if self.pos[0] >= WIDTH or self.pos[0] <= 0:
@@ -56,42 +56,53 @@ class Fish(AreaTarget):
             self.direction_vertical *= -1
 
 
-    def follow_swim(self, all_fish):
+    def follow_behaviour(self, all_fish):
         '''Fish find nearest smaller fish and moves towards it.\n
-        Direction of fish img changes accordingly to moving direction. After cathing the target, fish contiues to swim in the direction which was just before catching target.'''
+        Direction of fish img changes accordingly to moving direction. After catching target fish continues to swim in current direction'''
+
+        self.find_target_if_needed(all_fish)
+
+        # Did not find a target (self.target is still None) -> do neutral swim
+        if not self.following_target:
+            self.neutral_behaviour()
+        # Found a target -> follow it
+        else:
+            self.following_movement()
+
+            # CHECKING IF FISH CAUGHT UP THE TARGET
+            if self.check_if_overlapping(self.following_target):
+                self.eat_other_fish(self.following_target)
+
+
+    def following_movement(self):
+        '''Changing fish coordinates to be closer to target'''
+        # Determine movement in x axis
+        old_direction_horizontal = self.direction_horizontal
+        # difference between positions must be min 10 to change direction (to avoid fish img flickering)
+        if self.following_target.pos[0] <= self.pos[0] - 10:
+            self.direction_horizontal = -1
+        elif self.following_target.pos[0] >= self.pos[0] + 10:
+            self.direction_horizontal = 1
+        # Changing img direction if needed
+        if old_direction_horizontal != self.direction_horizontal:
+            self.update_img()
+
+        # Determine movement in y axis
+        if self.following_target.pos[1] < self.pos[1]:
+            self.direction_vertical = -1
+        else:
+            self.direction_vertical = 1
+
+        # Change position accordingly
+        self.change_pos_by(self.direction_horizontal * self.speed/2, self.direction_vertical * self.speed/2)
+
+
+    def find_target_if_needed(self, all_fish):
         # FINDING TARGET (nearest smaller fish) if not found already or previous target died or previous target got too big
         if not self.following_target or not self.following_target.alive or self.following_target.area() > self.area():
             self.following_target = self.find_nearest_target(all_fish)
             if self.following_target:
                 print(self.name + " is hungry...")
-        # Did not find a target (self.target is still None) -> do neutral swim
-        if not self.following_target:
-            self.neutral_swim()
-        # Found a target -> follow it
-        else:
-            # Changing coordinates to be closer to target
-            # x axis
-            old_direction_horizontal = self.direction_horizontal
-            # difference between positions must be min 10 to change direction (to avoid fish img flickering)
-            if self.following_target.pos[0] <= self.pos[0] - 10:
-                self.direction_horizontal = -1
-            elif self.following_target.pos[0] >= self.pos[0] + 10:
-                self.direction_horizontal = 1
-            # Changing img direction if needed
-            if old_direction_horizontal != self.direction_horizontal:
-                self.update_img()
-
-            # y axis
-            if self.following_target.pos[1] < self.pos[1]:
-                self.direction_vertical = -1
-            else:
-                self.direction_vertical = 1
-
-            self.change_pos_by(self.direction_horizontal * self.speed/2, self.direction_vertical * self.speed/2)
-
-            # CHECKING IF FISH CAUGHT UP THE TARGET
-            if self.check_if_overlapping(self.following_target):
-                self.eat_other_fish(self.following_target)
 
 
     def find_nearest_target(self, all_fish: list):
