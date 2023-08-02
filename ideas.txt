@@ -1,6 +1,6 @@
 
 FUNCTIONAL
-- different subclasses of Fish with different sizes, colors, pictures, swimming behaviour
+- different subclasses of Fish with different sizes, colors, pictures, swimming behaviour    ✓
     ex. fish which swims in circles (robi osemki); fish which sometimes kills without being hungry; fish which moves very slowly, only withing small area; fish which only swims deep in the sea -> in general, different habitat depths
 - new fish being born (small eggs emerge from mother fish, after a while become normal adult fish) / emerging from out of the screen
 
