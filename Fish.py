@@ -104,6 +104,7 @@ class Fish(AreaTarget):
 
     def find_target_if_needed(self, all_fish: list, available_food: list):
         ''' FINDING TARGET (nearest smaller fish) if not found already or previous target died or previous target got too big. '''
+        # TODO - potentially - if there is a nearer target, update folowing_target to it / this, but only update if there f_t is Food and another Food is nearer
         # Check not required if following_target is mouse cursor
         if type(self.following_target) is MouseTarget:
             pass
@@ -198,7 +199,8 @@ class Fish(AreaTarget):
 
 
     def eat_food(self, food: Food, all_food: list):
-        self.change_hunger(self.hunger + sqrt(food.area()))
+        # self.change_hunger(self.hunger + sqrt(food.area()))
+        self.change_hunger(self.hunger + 5)
         self.following_target = None
         food.eaten = True
         all_food.remove(food)
