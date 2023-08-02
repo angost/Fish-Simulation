@@ -73,7 +73,7 @@ class Fish(AreaTarget):
             # CHECKING IF FISH CAUGHT UP THE TARGET (not required for mouse cursor since nothing happens then) AND EATING IT
             if type(self.following_target) is not MouseTarget:
                 if self.check_if_overlapping(self.following_target):
-                    if type(self.following_target) is Fish:
+                    if isinstance(self.following_target, Fish):
                         self.eat_other_fish(self.following_target)
                     elif type(self.following_target) is Food:
                         self.eat_food(self.following_target, available_food)
@@ -111,12 +111,12 @@ class Fish(AreaTarget):
         elif type(self.following_target) is Food and self.following_target in available_food:
             pass
         # New target not needed if target Fish is still alive and still smaller than preying Fish
-        elif type(self.following_target) is Fish and self.following_target.alive and self.following_target.area() < self.area():
+        elif isinstance(self.following_target, Fish) and self.following_target.alive and self.following_target.area() < self.area():
             pass
         # Find new target
         else:
             self.following_target = self.find_nearest_target(all_fish, available_food)
-            if type(self.following_target) == Fish:
+            if isinstance(self.following_target, Fish):
                 print(self.name + " is preying on " + self.following_target.name)
 
 
