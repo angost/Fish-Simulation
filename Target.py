@@ -21,6 +21,10 @@ class PointTarget():
         self.pos[1] += y_diff
 
 
+    def calculate_distance(self, other_target):
+        return sqrt((self.pos[0] - other_target.pos[0])**2 + (self.pos[1] - other_target.pos[1])**2)
+
+
 class MouseTarget(PointTarget):
     def __init__(self, pos: list[float]):
         super().__init__(pos)
@@ -58,10 +62,6 @@ class AreaTarget(PointTarget):
 
 
     # DISTANCE
-    def calculate_distance(self, other_target):
-        return sqrt((self.pos[0] - other_target.pos[0])**2 + (self.pos[1] - other_target.pos[1])**2)
-
-
     def check_if_overlapping(self, other_target):
         if self.img_pos[0] < other_target.img_pos[0]:
             left_object, right_object = self, other_target
@@ -103,6 +103,7 @@ class AreaTarget(PointTarget):
 class Food(AreaTarget):
     def __init__(self, pos: list[float, float]):
         super().__init__(pos, "assets/shrimp_64.png", [10, 10])
+        self.eaten = False
 
 
     def fall(self):

@@ -2,7 +2,7 @@
 from random import randint, randrange, uniform
 from math import sqrt, pi
 import pygame
-from Target import PointTarget, MouseTarget, AreaTarget
+from Target import MouseTarget, AreaTarget, Food
 # WIDTH = 800
 # HEIGHT = 600
 WIDTH = 1024
@@ -30,11 +30,11 @@ class Fish(AreaTarget):
         return fish_info
 
 
-    def swim(self, all_fish):
+    def swim(self, all_fish, available_food):
         if self.alive:
             # If fish got hungry OR is already following something (mouse cursor)
             if self.hunger < self.prey_hunger or self.following_target:
-                self.follow_behaviour(all_fish)
+                self.follow_behaviour(all_fish, available_food)
             else:
                 self.neutral_behaviour()
 
@@ -57,11 +57,11 @@ class Fish(AreaTarget):
             self.direction_vertical *= -1
 
 
-    def follow_behaviour(self, all_fish):
+    def follow_behaviour(self, all_fish, available_food):
         '''Fish find nearest smaller fish and moves towards it.\n
         Direction of fish img changes accordingly to moving direction. After catching target fish continues to swim in current direction'''
 
-        self.find_target_if_needed(all_fish)
+        self.find_target_if_needed(all_fish, available_food)
 
         # Did not find a target (self.target is still None) -> do neutral swim
         if not self.following_target:
@@ -70,10 +70,13 @@ class Fish(AreaTarget):
         else:
             self.following_movement()
 
-            # CHECKING IF FISH CAUGHT UP THE TARGET (not required for mouse cursor since nothing happens then)
+            # CHECKING IF FISH CAUGHT UP THE TARGET (not required for mouse cursor since nothing happens then) AND EATING IT
             if type(self.following_target) is not MouseTarget:
                 if self.check_if_overlapping(self.following_target):
-                    self.eat_other_fish(self.following_target)
+                    if type(self.following_target) is Fish:
+                        self.eat_other_fish(self.following_target)
+                    elif type(self.following_target) is Food:
+                        self.eat_food(self.following_target, available_food)
 
 
     def following_movement(self):
@@ -99,27 +102,36 @@ class Fish(AreaTarget):
         self.change_pos_by(self.direction_horizontal * self.speed/2, self.direction_vertical * self.speed/2)
 
 
-    def find_target_if_needed(self, all_fish):
+    def find_target_if_needed(self, all_fish: list, available_food: list):
         ''' FINDING TARGET (nearest smaller fish) if not found already or previous target died or previous target got too big. '''
         # Check not required if following_target is mouse cursor
         if type(self.following_target) is MouseTarget:
             pass
+        # New target not needed if Food is still available
+        elif type(self.following_target) is Food and self.following_target in available_food:
+            pass
+        # New target not needed if target Fish is still alive and still smaller than preying Fish
+        elif type(self.following_target) is Fish and self.following_target.alive and self.following_target.area() < self.area():
+            pass
+        # Find new target
         else:
-            if not self.following_target or not self.following_target.alive or self.following_target.area() > self.area():
-                self.following_target = self.find_nearest_target(all_fish)
-                if self.following_target:
-                    print(self.name + " is hungry...")
+            self.following_target = self.find_nearest_target(all_fish, available_food)
+            if type(self.following_target) == Fish:
+                print(self.name + " is preying on " + self.following_target.name)
 
 
-    def find_nearest_target(self, all_fish: list):
+    def find_nearest_target(self, all_fish: list, available_food: list):
         '''Finds nearest target. Target = alive! smaller fish\n
         Calculates distance between centres of imgs'''
         # TIP: self doesn't end up in targets list beaceuse its not true that self.size < self.size; if lookingfor targets method were to change, self not being in targets list has to be guaranteed
         targets = [fish for fish in all_fish if (fish.alive and fish.area() < self.area())]
+        # TODO przefiltrowac zjedzone jedzenie
+        # available_food = [food for food in available_food if not food.eaten]
+        targets += available_food
         # Returns None when there are no smaller fish
         if len(targets) == 0:
             return None
-        nearest_target = min(targets, key = lambda fish : self.calculate_distance(fish))
+        nearest_target = min(targets, key = lambda target : self.calculate_distance(target))
         return nearest_target
 
 
@@ -183,6 +195,13 @@ class Fish(AreaTarget):
 
         print("Dziab!!\t" + self.name + " has eaten " + other_fish.name + ". Size: " + str(old_area) + " -> " + str(new_area))
         other_fish.die()
+
+
+    def eat_food(self, food: Food, all_food: list):
+        self.change_hunger(self.hunger + sqrt(food.area()))
+        self.following_target = None
+        food.eaten = True
+        all_food.remove(food)
 
 
     def die(self):

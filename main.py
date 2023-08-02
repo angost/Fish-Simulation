@@ -26,8 +26,7 @@ def fish_setup(nr_of_fish):
 
 
 def main():
-    # WIDTH = 800
-    # HEIGHT = 600
+    # SETUP
     WIDTH = 1024
     HEIGHT = 768
     pygame.init()
@@ -43,10 +42,11 @@ def main():
     follow_mouse = False
     mouse_target = MouseTarget([0,0])
 
-    foods = []
+    available_food = []
 
     main_loop = True
     while main_loop:
+        # USER INTERACTION
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 main_loop = False
@@ -62,7 +62,7 @@ def main():
                 elif pygame.mouse.get_pressed()[2]:
                     print("Spawn food")
                     mouse_pos = list(pygame.mouse.get_pos())
-                    foods.append(Food(mouse_pos))
+                    available_food.append(Food(mouse_pos))
 
             elif event.type == pygame.MOUSEBUTTONUP:
                 # Stopped mouse following
@@ -78,18 +78,19 @@ def main():
             mouse_pos = list(pygame.mouse.get_pos())
             mouse_target.change_pos_to(mouse_pos)
 
+        # UPDATING THE SCREEN
         # Semi-transparent circles
         screen.fill((42, 108, 212))
         transparent_surface.fill((42, 108, 212))
         for fish in all_fish:
             pygame.draw.circle(transparent_surface, tuple(list(fish.color) + [190]), fish.pos, max(fish.size)/2)
         screen.blit(transparent_surface, (0, 0))
-        # Fish imgs, functionality
+        # Fish imgs, FUNCIONALITY
         for fish in all_fish:
             screen.blit(fish.img, fish.img_pos)
-            fish.swim(all_fish)
+            fish.swim(all_fish, available_food)
 
-        for food in foods:
+        for food in available_food:
             screen.blit(food.img, food.img_pos)
             food.fall()
 
