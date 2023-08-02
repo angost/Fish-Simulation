@@ -1,6 +1,8 @@
 
 import pygame
 from math import sqrt
+WIDTH = 1024
+HEIGHT = 768
 
 
 class PointTarget():
@@ -26,7 +28,7 @@ class MouseTarget(PointTarget):
 
 class AreaTarget(PointTarget):
     ''' Target that has area and image. '''
-    def __init__(self, pos: list[float], img_path: str, base_size: float):
+    def __init__(self, pos: list[float], img_path: str, base_size: list[float, float]):
         # self.pos = center of the image; self.img_pos = top left corner of the img
         super().__init__(pos)
         self.size = base_size
@@ -98,12 +100,13 @@ class AreaTarget(PointTarget):
             self.img = pygame.transform.flip(self.img, True, False)
 
 
+class Food(AreaTarget):
+    def __init__(self, pos: list[float, float]):
+        super().__init__(pos, "assets/shrimp_64.png", [10, 10])
 
 
-
-
-
-
-
+    def fall(self):
+        if self.pos[1] < HEIGHT:
+            self.change_pos_by(0, 0.5)
 
 
