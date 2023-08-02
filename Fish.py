@@ -84,16 +84,14 @@ class Fish:
             # Changing coordinates to be closer to target
             # x axis
             old_direction_horizontal = self.direction_horizontal
-            if self.following_target.pos[0] < self.pos[0]:
+            # difference between positions must be min 10 to change direction (to avoid fish img flickering)
+            if self.following_target.pos[0] <= self.pos[0] - 10:
                 self.direction_horizontal = -1
-            else:
+            elif self.following_target.pos[0] >= self.pos[0] + 10:
                 self.direction_horizontal = 1
             # Changing img direction if needed
             if old_direction_horizontal != self.direction_horizontal:
-                self.img = pygame.image.load(self.img_path)
-                self.img = pygame.transform.scale(self.img, (self.size[0], self.size[1]))
-                if self.direction_horizontal == -1:
-                    self.img = pygame.transform.flip(self.img, True, False)
+                self.update_img()
 
             # y axis
             if self.following_target.pos[1] < self.pos[1]:
@@ -144,16 +142,20 @@ class Fish:
 
     def grow_to_size(self, new_size: list[float, float]):
         self.size = new_size
-        self.img = pygame.image.load(self.img_path)
-        self.img = pygame.transform.scale(self.img, (self.size[0], self.size[1]))
-        if self.direction_horizontal == -1:
-            self.img = pygame.transform.flip(self.img, True, False)
+        self.update_img()
         # Also updates img_pos (when growing, center stays in the same place, but top left corner of img changes)
         self.img_pos = [self.pos[0] - self.size[0]/2, self.pos[1] - self.size[1]/2]
 
 
     def area(self):
         return self.size[0] * self.size[1]
+
+
+    def update_img(self):
+        self.img = pygame.image.load(self.img_path)
+        self.img = pygame.transform.scale(self.img, (self.size[0], self.size[1]))
+        if self.direction_horizontal == -1:
+            self.img = pygame.transform.flip(self.img, True, False)
 
 
     def change_hunger(self, new_hunger):
@@ -221,8 +223,8 @@ class Fish:
     def die(self):
         self.alive = False
         self.img_path = "assets/fish_bones.png"
-        self.img = pygame.image.load(self.img_path)
-        self.img = pygame.transform.scale(self.img, (self.size[0], self.size[1]))
+        self.direction_horizontal = 1
+        self.update_img()
         print("x_x")
 
 
