@@ -4,6 +4,7 @@ from math import sqrt
 
 
 class PointTarget():
+    ''' Target with just position '''
     def __init__(self, pos: list[float, float]):
         # self.pos = center of the image
         self.pos = pos
@@ -20,11 +21,12 @@ class PointTarget():
 
 class AreaTarget(PointTarget):
     ''' Target that has area and image. '''
-    def __init__(self, pos: list[float], base_size: float, img_path: str):
+    def __init__(self, pos: list[float], img_path: str, base_size: float):
         # self.pos = center of the image; self.img_pos = top left corner of the img
         super().__init__(pos)
-        self.img_pos = [self.pos[0] - self.size[0]/2, self.pos[1] - self.size[1]/2]
         self.size = base_size
+        self.img_pos = [self.pos[0] - self.size[0]/2, self.pos[1] - self.size[1]/2]
+        # [width, height]
 
         self.img_path = img_path
         self.img = pygame.image.load(self.img_path)

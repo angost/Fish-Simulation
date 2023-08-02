@@ -24,7 +24,6 @@ def fish_setup(nr_of_fish):
     return fish
 
 
-
 def main():
     # WIDTH = 800
     # HEIGHT = 600
@@ -69,7 +68,6 @@ def main():
         for fish in all_fish:
             screen.blit(fish.img, fish.img_pos)
             fish.swim(all_fish)
-
 
 
         pygame.display.flip()

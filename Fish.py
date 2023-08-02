@@ -2,29 +2,25 @@
 from random import randint, randrange, uniform
 from math import sqrt, pi
 import pygame
+from Target import PointTarget, AreaTarget
 # WIDTH = 800
 # HEIGHT = 600
 WIDTH = 1024
 HEIGHT = 768
 
-class Fish:
+
+class Fish(AreaTarget):
     def __init__(self, name: str, img_path: str, base_size: list[float, float], speed: float, max_hunger: float = 100):
+
+        pos = [randint(0, WIDTH), randint(0, HEIGHT)]
+        super().__init__(pos, img_path, base_size)
+
         self.name = name
-        # [width, height]
-        self.size = base_size
-        self.img_path = img_path
-        self.img = pygame.image.load(self.img_path)
-        self.img = pygame.transform.scale(self.img, (self.size[0], self.size[1]))
         self.speed = speed
         self.max_hunger = max_hunger
         self.prey_hunger = max_hunger/2
         self.change_hunger(round(uniform(max_hunger*2/3, max_hunger), 2))
-        # self.change_hunger(randrange(round(max_hunger*2/3), max_hunger, 5))
-        # self.pos = center of the image
-        self.pos = [randint(0, WIDTH), randint(0, HEIGHT)]
-        self.img_pos = [self.pos[0] - self.size[0]/2, self.pos[1] - self.size[1]/2]
-        self.direction_horizontal = 1   # 1 = swimming right, -1 = swimming left
-        self.direction_vertical = 1     # 1 = swimming down, -1 = swimming up
+
         self.alive = True
         self.following_target = None
 
@@ -32,14 +28,6 @@ class Fish:
     def __str__(self):
         fish_info = self.name.ljust(20) + " Size: " + str(self.size) + " Speed: " + str(self.speed) + " Hunger: " + str(self.hunger)
         return fish_info
-
-
-    def change_pos(self, x_diff, y_diff):
-        self.pos[0] += x_diff
-        self.img_pos[0] += x_diff
-
-        self.pos[1] += y_diff
-        self.img_pos[1] += y_diff
 
 
     def swim(self, all_fish):
@@ -55,11 +43,11 @@ class Fish:
         else:
             # Falling to the bottom of the screen
             if self.pos[1] < HEIGHT:
-                self.change_pos(0, 1)
+                self.change_pos_by(0, 1)
 
 
     def neutral_swim(self):
-        self.change_pos(self.direction_horizontal * self.speed/2, self.direction_vertical * self.speed/2)
+        self.change_pos_by(self.direction_horizontal * self.speed/2, self.direction_vertical * self.speed/2)
         # Turn if reached screen border
         if self.pos[0] >= WIDTH or self.pos[0] <= 0:
             self.direction_horizontal *= -1
@@ -99,7 +87,7 @@ class Fish:
             else:
                 self.direction_vertical = 1
 
-            self.change_pos(self.direction_horizontal * self.speed/2, self.direction_vertical * self.speed/2)
+            self.change_pos_by(self.direction_horizontal * self.speed/2, self.direction_vertical * self.speed/2)
 
             # CHECKING IF FISH CAUGHT UP THE TARGET
             if self.check_if_overlapping(self.following_target):
@@ -116,46 +104,6 @@ class Fish:
             return None
         nearest_target = min(targets, key = lambda fish : self.calculate_distance(fish))
         return nearest_target
-
-
-    def check_if_overlapping(self, other_fish):
-        if self.img_pos[0] < other_fish.img_pos[0]:
-            left_object, right_object = self, other_fish
-        else:
-            left_object, right_object = other_fish, self
-        # Right side of left object overlaps with left side of right object
-        horizontal_overlap = left_object.img_pos[0] + left_object.size[0] > right_object.img_pos[0]
-
-        if self.img_pos[1] < other_fish.img_pos[1]:
-            top_object, bottom_object = self, other_fish
-        else:
-            top_object, bottom_object = other_fish, self
-        # Bottom side of top object overlaps with top side of bottom object
-        vertical_overlap = top_object.img_pos[1] + top_object.size[1] > bottom_object.img_pos[1]
-
-        return horizontal_overlap and vertical_overlap
-
-
-    def calculate_distance(self, other_fish):
-        return sqrt((self.pos[0] - other_fish.pos[0])**2 + (self.pos[1] - other_fish.pos[1])**2)
-
-
-    def grow_to_size(self, new_size: list[float, float]):
-        self.size = new_size
-        self.update_img()
-        # Also updates img_pos (when growing, center stays in the same place, but top left corner of img changes)
-        self.img_pos = [self.pos[0] - self.size[0]/2, self.pos[1] - self.size[1]/2]
-
-
-    def area(self):
-        return self.size[0] * self.size[1]
-
-
-    def update_img(self):
-        self.img = pygame.image.load(self.img_path)
-        self.img = pygame.transform.scale(self.img, (self.size[0], self.size[1]))
-        if self.direction_horizontal == -1:
-            self.img = pygame.transform.flip(self.img, True, False)
 
 
     def change_hunger(self, new_hunger):
