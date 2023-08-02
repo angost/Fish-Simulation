@@ -63,11 +63,14 @@ class Fish:
         # Turn if reached screen border
         if self.pos[0] >= WIDTH or self.pos[0] <= 0:
             self.direction_horizontal *= -1
+            self.img = pygame.transform.flip(self.img, True, False)
         if self.pos[1] >= HEIGHT or self.pos[1] <= 0:
             self.direction_vertical *= -1
 
 
     def follow_swim(self, all_fish):
+        '''Fish find nearest smaller fish and moves towards it.\n
+        Direction of fish img changes accordingly to moving direction. After cathing the target, fish contiues to swim in the direction which was just before catching target.'''
         # FINDING TARGET (nearest smaller fish) if not found already or previous target died or previous target got too big
         if not self.following_target or not self.following_target.alive or self.following_target.area() > self.area():
             self.following_target = self.find_nearest_target(all_fish)
@@ -80,15 +83,25 @@ class Fish:
         else:
             # Changing coordinates to be closer to target
             # x axis
+            old_direction_horizontal = self.direction_horizontal
             if self.following_target.pos[0] < self.pos[0]:
-                self.change_pos(-self.speed/2, 0)
+                self.direction_horizontal = -1
             else:
-                self.change_pos(self.speed/2, 0)
+                self.direction_horizontal = 1
+            # Changing img direction if needed
+            if old_direction_horizontal != self.direction_horizontal:
+                self.img = pygame.image.load(self.img_path)
+                self.img = pygame.transform.scale(self.img, (self.size[0], self.size[1]))
+                if self.direction_horizontal == -1:
+                    self.img = pygame.transform.flip(self.img, True, False)
+
             # y axis
             if self.following_target.pos[1] < self.pos[1]:
-                self.change_pos(0, -self.speed/2)
+                self.direction_vertical = -1
             else:
-                self.change_pos(0, self.speed/2)
+                self.direction_vertical = 1
+
+            self.change_pos(self.direction_horizontal * self.speed/2, self.direction_vertical * self.speed/2)
 
             # CHECKING IF FISH CAUGHT UP THE TARGET
             if self.check_if_overlapping(self.following_target):
@@ -133,6 +146,8 @@ class Fish:
         self.size = new_size
         self.img = pygame.image.load(self.img_path)
         self.img = pygame.transform.scale(self.img, (self.size[0], self.size[1]))
+        if self.direction_horizontal == -1:
+            self.img = pygame.transform.flip(self.img, True, False)
         # Also updates img_pos (when growing, center stays in the same place, but top left corner of img changes)
         self.img_pos = [self.pos[0] - self.size[0]/2, self.pos[1] - self.size[1]/2]
 
