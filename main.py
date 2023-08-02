@@ -1,7 +1,7 @@
 
 import pygame
 from random import randint, choice
-from Target import PointTarget, AreaTarget
+from Target import PointTarget, MouseTarget, AreaTarget
 from Fish import Fish, BlueFish, SwordFish, CatFish, NemoFish, GoldFish, FishGroup, PufferFish, TropicalFish
 
 def fish_setup(nr_of_fish):
@@ -41,13 +41,14 @@ def main():
         print(fish)
 
     follow_mouse = False
-    mouse_target = PointTarget([0,0])
+    mouse_target = MouseTarget([0,0])
 
     main_loop = True
     while main_loop:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 main_loop = False
+
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 # Started mouse following
                 if not follow_mouse and pygame.mouse.get_pressed()[0]:
@@ -58,6 +59,7 @@ def main():
                         fish.following_target = mouse_target
                 elif pygame.mouse.get_pressed()[2]:
                     print("Spawn food")
+
             elif event.type == pygame.MOUSEBUTTONUP:
                 # Stopped mouse following
                 if follow_mouse and not pygame.mouse.get_pressed()[0]:

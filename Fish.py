@@ -2,7 +2,7 @@
 from random import randint, randrange, uniform
 from math import sqrt, pi
 import pygame
-from Target import PointTarget, AreaTarget
+from Target import PointTarget, MouseTarget, AreaTarget
 # WIDTH = 800
 # HEIGHT = 600
 WIDTH = 1024
@@ -32,10 +32,11 @@ class Fish(AreaTarget):
 
     def swim(self, all_fish):
         if self.alive:
-            if self.hunger >= self.prey_hunger:
-                self.neutral_behaviour()
-            else:
+            # If fish got hungry OR is already following something (mouse cursor)
+            if self.hunger < self.prey_hunger or self.following_target:
                 self.follow_behaviour(all_fish)
+            else:
+                self.neutral_behaviour()
 
             self.change_hunger(self.hunger - (self.max_hunger * 0.0001)*self.speed)
             if self.hunger <= 0:
@@ -69,9 +70,10 @@ class Fish(AreaTarget):
         else:
             self.following_movement()
 
-            # CHECKING IF FISH CAUGHT UP THE TARGET
-            if self.check_if_overlapping(self.following_target):
-                self.eat_other_fish(self.following_target)
+            # CHECKING IF FISH CAUGHT UP THE TARGET (not required for mouse cursor since nothing happens then)
+            if type(self.following_target) is not MouseTarget:
+                if self.check_if_overlapping(self.following_target):
+                    self.eat_other_fish(self.following_target)
 
 
     def following_movement(self):
@@ -98,11 +100,15 @@ class Fish(AreaTarget):
 
 
     def find_target_if_needed(self, all_fish):
-        # FINDING TARGET (nearest smaller fish) if not found already or previous target died or previous target got too big
-        if not self.following_target or not self.following_target.alive or self.following_target.area() > self.area():
-            self.following_target = self.find_nearest_target(all_fish)
-            if self.following_target:
-                print(self.name + " is hungry...")
+        ''' FINDING TARGET (nearest smaller fish) if not found already or previous target died or previous target got too big. '''
+        # Check not required if following_target is mouse cursor
+        if type(self.following_target) is MouseTarget:
+            pass
+        else:
+            if not self.following_target or not self.following_target.alive or self.following_target.area() > self.area():
+                self.following_target = self.find_nearest_target(all_fish)
+                if self.following_target:
+                    print(self.name + " is hungry...")
 
 
     def find_nearest_target(self, all_fish: list):

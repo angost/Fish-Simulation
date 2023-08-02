@@ -19,6 +19,11 @@ class PointTarget():
         self.pos[1] += y_diff
 
 
+class MouseTarget(PointTarget):
+    def __init__(self, pos: list[float]):
+        super().__init__(pos)
+
+
 class AreaTarget(PointTarget):
     ''' Target that has area and image. '''
     def __init__(self, pos: list[float], img_path: str, base_size: float):
