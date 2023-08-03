@@ -110,10 +110,15 @@ class Fish(AreaTarget):
             pass
         # New target not needed if Food is still available
         elif type(self.following_target) is Food and self.following_target in available_food:
-            pass
+            potential_closer_food = self.find_nearest_food(available_food)
+            # potential_closer_food cannot be None since current following_target is in it
+            if potential_closer_food != self.following_target:
+                self.following_target = potential_closer_food
         # New target not needed if target Fish is still alive and still smaller than preying Fish
         elif isinstance(self.following_target, Fish) and self.following_target.alive and self.following_target.area() < self.area():
-            pass
+            potential_closer_food = self.find_nearest_food(available_food)
+            if potential_closer_food != None and self.calculate_distance(potential_closer_food) < self.calculate_distance(self.following_target):
+                self.following_target = potential_closer_food
         # Find new target
         else:
             self.following_target = self.find_nearest_target(all_fish, available_food)
@@ -126,14 +131,17 @@ class Fish(AreaTarget):
         Calculates distance between centres of imgs'''
         # TIP: self doesn't end up in targets list beaceuse its not true that self.size < self.size; if lookingfor targets method were to change, self not being in targets list has to be guaranteed
         targets = [fish for fish in all_fish if (fish.alive and fish.area() < self.area())]
-        # TODO przefiltrowac zjedzone jedzenie
-        # available_food = [food for food in available_food if not food.eaten]
+        # TIP - filtering food is not necessary because foods gets removed from the list after being eaten
         targets += available_food
         # Returns None when there are no smaller fish
         if len(targets) == 0:
             return None
         nearest_target = min(targets, key = lambda target : self.calculate_distance(target))
         return nearest_target
+
+
+    def find_nearest_food(self, available_food: list):
+        return self.find_nearest_target([], available_food)
 
 
     def change_hunger(self, new_hunger):
@@ -200,7 +208,7 @@ class Fish(AreaTarget):
 
     def eat_food(self, food: Food, all_food: list):
         # self.change_hunger(self.hunger + sqrt(food.area()))
-        self.change_hunger(self.hunger + 5)
+        self.change_hunger(self.hunger + 1)
         self.following_target = None
         food.eaten = True
         all_food.remove(food)
