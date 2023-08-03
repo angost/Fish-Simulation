@@ -19,6 +19,7 @@ class Fish(AreaTarget):
         self.speed = speed
         self.max_hunger = max_hunger
         self.prey_hunger = max_hunger/2
+        self.snack_hunger = max_hunger*2/3
         self.change_hunger(round(uniform(max_hunger*2/3, max_hunger), 2))
 
         self.alive = True
@@ -33,7 +34,7 @@ class Fish(AreaTarget):
     def swim(self, all_fish, available_food):
         if self.alive:
             # If fish got hungry OR is already following something (mouse cursor)
-            if self.hunger < self.prey_hunger or self.following_target:
+            if self.hunger < self.snack_hunger or self.following_target:
                 self.follow_behaviour(all_fish, available_food)
             else:
                 self.neutral_behaviour()
@@ -103,8 +104,7 @@ class Fish(AreaTarget):
 
 
     def find_target_if_needed(self, all_fish: list, available_food: list):
-        ''' FINDING TARGET (nearest smaller fish) if not found already or previous target died or previous target got too big. '''
-        # TODO - potentially - if there is a nearer target, update folowing_target to it / this, but only update if there f_t is Food and another Food is nearer
+        ''' FINDING TARGET (nearest smaller fish/food) if not found already or previous target died or previous target got too big. '''
         # Check not required if following_target is mouse cursor
         if type(self.following_target) is MouseTarget:
             pass
@@ -121,9 +121,14 @@ class Fish(AreaTarget):
                 self.following_target = potential_closer_food
         # Find new target
         else:
-            self.following_target = self.find_nearest_target(all_fish, available_food)
-            if isinstance(self.following_target, Fish):
-                print(self.name + " is preying on " + self.following_target.name)
+            # More hungry - look for Fish and Food
+            if self.hunger < self.prey_hunger:
+                self.following_target = self.find_nearest_target(all_fish, available_food)
+                if isinstance(self.following_target, Fish):
+                    print(self.name + " is preying on " + self.following_target.name)
+            # Less hungry - only look for Food
+            elif self.hunger < self.snack_hunger:
+                self.following_target = self.find_nearest_target([], available_food)
 
 
     def find_nearest_target(self, all_fish: list, available_food: list):
